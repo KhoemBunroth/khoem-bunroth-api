@@ -8,6 +8,24 @@ use Illuminate\Support\Facades\Validator;
 
 class PositionController extends Controller
 {
+
+      /**
+     * @OA\Get(
+     *     path="/api/position/lists",
+     *     summary="Get list of positions",
+     *     tags={"Position"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation"
+     *     )
+     * )
+     */
+
+    public function index(){
+        return Position::all();
+    }
+
+
     function lists(Request $request)
     {
         $data = Position::all();
@@ -17,6 +35,55 @@ class PositionController extends Controller
             'status_code' => 200
         ]);
     }
+
+
+        /**
+     * @OA\Post(
+     *     path="/api/position/create",
+     *     summary="Create a new position",
+     *     description="Creates a new position with branch_id, name, and optional description.",
+     *     operationId="createPosition",
+     *     tags={"Position"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"branch_id", "name"},
+     *             @OA\Property(property="branch_id", type="integer", example=1),
+     *             @OA\Property(property="name", type="string", example="IT Officer"),
+     *             @OA\Property(property="description", type="string", example="Handles all IT-related tasks", nullable=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Position created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="new_data", type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="branch_id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="IT Officer"),
+     *                 @OA\Property(property="description", type="string", example="Handles all IT-related tasks"),
+     *                 @OA\Property(property="created_at", type="string", example="2025-08-06T12:00:00.000000Z"),
+     *                 @OA\Property(property="updated_at", type="string", example="2025-08-06T12:00:00.000000Z")
+     *             ),
+     *             @OA\Property(property="status_code", type="integer", example=200)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="error", type="object",
+     *                 @OA\Property(property="branch_id", type="string", example="The branch_id field is required."),
+     *                 @OA\Property(property="name", type="string", example="The name field is required.")
+     *             ),
+     *             @OA\Property(property="status_code", type="integer", example=422)
+     *         )
+     *     )
+     * )
+     */
+
 
      function create(Request $request){
         $validated = Validator::make($request->all(), [
@@ -47,6 +114,53 @@ class PositionController extends Controller
         ]);
     }
 
+
+        /**
+     * @OA\Post(
+     *     path="/api/position/update",
+     *     summary="Update a position",
+     *     description="Updates an existing position using its ID",
+     *     operationId="updatePosition",
+     *     tags={"Position"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"id", "branch_id", "name"},
+     *             @OA\Property(property="id", type="integer", example=1),
+     *             @OA\Property(property="branch_id", type="integer", example=2),
+     *             @OA\Property(property="name", type="string", example="IT Supervisor"),
+     *             @OA\Property(property="description", type="string", example="Manages IT department", nullable=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Position updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="update_data", type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="branch_id", type="integer", example=2),
+     *                 @OA\Property(property="name", type="string", example="IT Supervisor"),
+     *                 @OA\Property(property="description", type="string", example="Manages IT department"),
+     *                 @OA\Property(property="created_at", type="string", example="2025-08-06T12:00:00.000000Z"),
+     *                 @OA\Property(property="updated_at", type="string", example="2025-08-06T12:10:00.000000Z")
+     *             ),
+     *             @OA\Property(property="status_code", type="integer", example=200)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Position not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="not found"),
+     *             @OA\Property(property="status_code", type="integer", example=404)
+     *         )
+     *     )
+     * )
+     */
+
+
+
     function update(Request $request){
         $position = Position::find($request->id);
         if($position != null){
@@ -61,6 +175,41 @@ class PositionController extends Controller
         ]);
         }
     }
+
+        /**
+     * @OA\Post(
+     *     path="/api/position/delete",
+     *     summary="Delete a position",
+     *     description="Deletes a position by its ID",
+     *     operationId="deletePosition",
+     *     tags={"Position"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"id"},
+     *             @OA\Property(property="id", type="integer", example=1)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Position deleted successfully or not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="delete_data", type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="branch_id", type="integer", example=2),
+     *                 @OA\Property(property="name", type="string", example="IT Supervisor"),
+     *                 @OA\Property(property="description", type="string", example="Manages IT department"),
+     *                 @OA\Property(property="created_at", type="string", example="2025-08-06T12:00:00.000000Z"),
+     *                 @OA\Property(property="updated_at", type="string", example="2025-08-06T12:10:00.000000Z")
+     *             ),
+     *             @OA\Property(property="status_code", type="integer", example=200)
+     *         )
+     *     )
+     * )
+     */
+
+
 
     function delete(Request $request){
         $position = Position::find($request->id);
